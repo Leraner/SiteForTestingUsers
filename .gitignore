@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 .idea
+.DS_Store
+.fleet
+.vscode
+pyrightconfig.json

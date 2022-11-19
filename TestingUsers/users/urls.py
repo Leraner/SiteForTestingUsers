@@ -5,6 +5,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 router = SimpleRouter()
+
 router.register('', CustomUserView, basename='users')
 
 urlpatterns = [
