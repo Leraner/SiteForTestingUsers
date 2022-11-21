@@ -1,6 +1,9 @@
+from django.core.files.images import ImageFile
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+
+from users.services import resize_image, crop_image, prepare_image_coordinates
 from .serializers import PostSerializer, CategorySerializer
 from .models import PostEnumChoice, Category, Post
 from .permissions import IsAuthOrReadOnly
@@ -19,16 +22,31 @@ class PostViewSet(ModelViewSet):
     permission_class = IsAuthOrReadOnly
 
     def get_queryset(self):
-        return Post.objects.filter(status=PostEnumChoice.RELEASE)
+        return Post.objects.filter(status=PostEnumChoice.RELEASE).order_by('-created_date')
 
     def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        cover = data.pop('cover')
+
+        # check for erotic photos
+
         category = Category.objects.filter(
-            slug=request.data.pop('category')).first()
+            slug=data.pop('category')).first()
 
         if category is not None:
-            request.data['category'] = category.slug
+            data['category'] = category.title
 
-        serializer = self.get_serializer(data=request.data)
+        if cover:
+            image = cover.get('image')
+            coords = cover.get('coords')
+
+            b_image = crop_image(
+                image, prepare_image_coordinates(coords))
+
+            cover = ImageFile(b_image[0], name=f'{request.user.pk}.jpeg')
+            data['cover'] = cover
+
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
 

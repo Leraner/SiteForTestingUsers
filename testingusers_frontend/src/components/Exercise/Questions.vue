@@ -68,7 +68,7 @@ export default {
     },
     questionsCount: {
       required: true,
-      type: String,
+      type: Number,
     },
     notFirstTry: {
       required: true,
@@ -135,4 +135,7 @@ export default {
 </script>
 
 <style scoped>
+.control {
+  margin: 1rem;
+}
 </style>

@@ -1,14 +1,14 @@
 import axios from "axios";
 
 export default {
-    async fetchMyExams(context) {
-        const { status, data } = await axios.get('exams/exam/my_exams/')
+    async createPost(context, payload) {
+      const { status, data } = await axios.post('posts/posts_list/', payload)
 
-        let result = { success: true, status, data }
+      let result = { success: true, status, data }
 
-        if (result.status === 200) {
-            return { ...result }
-        }
+      if (result.status === 200) {
+          return { ...result }
+      }
     },
     async fetchCategories(context) {
         const { status, data } = await axios.get('posts/categories_list/')

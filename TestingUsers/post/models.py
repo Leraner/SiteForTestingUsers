@@ -52,7 +52,7 @@ class Post(models.Model):
         on_delete=models.CASCADE,
         related_name='post_category'
     )
-    exams = models.ForeignKey(
+    exam = models.ForeignKey(
         Exam,
         on_delete=models.SET_NULL,
         null=True,

@@ -47,6 +47,7 @@ def crop_image(tmp_image, coords=()):
     buffer = BytesIO()
     image = Image.open(io.BytesIO(imgdata))
     image = image.crop(coords)
+    image.thumbnail((1700, 459))
     image.save(buffer, format='png', optimize=True, quality=30)
     image.close()
 

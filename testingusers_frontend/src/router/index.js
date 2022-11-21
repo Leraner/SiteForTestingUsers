@@ -2,11 +2,11 @@ import { createRouter, createWebHistory } from "vue-router";
 import store from "../store";
 
 const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: () => import("../views/Home.vue"),
-  },
+  // {
+  //   path: "/",
+  //   name: "Home",
+  //   component: () => import("../views/Home.vue"),
+  // },
   {
     path: "/profile",
     name: "MyProfile",
@@ -62,7 +62,7 @@ const routes = [
     },
   },
   {
-    path: "/posts",
+    path: "/",
     name: "Posts",
     component: () => import("../components/Post/PostList.vue")
   },

@@ -3,6 +3,7 @@ import store from "@/store/index.js";
 
 export default {
   async fetchUserProfile(context, payload) {
+    
     const { status, data } = await axios.get(`users/${payload}`);
 
     let result = { success: true, status, data };

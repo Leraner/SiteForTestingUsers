@@ -1,5 +1,5 @@
 w<template>
-  <div><h1>Exam Page</h1></div>
+  <div><h1>Examination</h1></div>
   <div
       class="author"
       v-if="examAuthor"
@@ -33,7 +33,7 @@ export default {
     },
     exam_id: {
       required: true,
-      type: String,
+      type: Number,
     },
   },
   data() {
