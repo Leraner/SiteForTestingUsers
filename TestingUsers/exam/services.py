@@ -34,7 +34,7 @@ class ExamConductor:
         return serializer.data
 
     def _create_answer(self, author: CustomUser, question: dict, data: dict) -> dict:
-        data.update({'author': author.id, 'question': question, **data})
+        data.update({'author': author.id, 'question': question['id'],  **data})
         serializer = ExamAnswerSerializer(data=data)
         serializer.is_valid(raise_exception=True)
         serializer.save()

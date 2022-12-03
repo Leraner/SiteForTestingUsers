@@ -57,6 +57,8 @@ export default {
         exam_id: this.exam_id,
       });
 
+      console.log(result)
+
       if (result.status === 200) {
         this.examAuthor = result.data.author;
         this.questionsList = result.data.questions;

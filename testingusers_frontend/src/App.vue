@@ -7,6 +7,8 @@
       |
       <router-link to="/profile">Profile</router-link>
       |
+      <router-link to="/post/create">Create Post</router-link>
+      |
       <a @click="logout">Logout</a>
     </div>
     <router-link to="/login" v-if="!this.$store.state.isAuthenticated"

@@ -31,7 +31,9 @@ SECRET_KEY = 'django-insecure-uiibm9h+!^rmc3&syov%n!46kk75+9r)iwe-wa60_it%rvqqn3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # '0.0.0.0'
+]
 
 # Application definition
 
@@ -45,6 +47,7 @@ THIRD_PARTY_APPS = [
     'drf_yasg',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    'django_celery_results',
 ]
 
 LOCAL_APPS = [
@@ -104,12 +107,24 @@ WSGI_APPLICATION = 'TestingUsers.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'HOST': 'db',
+#         'PORT': 5432,
+#         'USER': 'admin',
+#         'PASSWORD': 'admin',
+#         'NAME': 'testingusers_db'
+#     }
+# }
 
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
@@ -176,10 +191,10 @@ INTERNAL_IPS = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
+    'http://127.0.0.1:5000',
 ]
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env.str('EMAIL_HOST')
 EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
@@ -187,8 +202,10 @@ EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
+# CELERY_BROKER_URL = 'pyamqp://rabbitmq:5672'
 CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
 CELERY_RESULT_BACKEND = 'rpc://'
+
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'

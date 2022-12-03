@@ -82,7 +82,6 @@
 </template>
 
 <script>
-// TODO: Add preview of exam
 import { ref } from "vue";
 import Popup from "../Popup.vue";
 

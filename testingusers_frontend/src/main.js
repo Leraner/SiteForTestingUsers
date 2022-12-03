@@ -11,6 +11,7 @@ import "bootstrap";
 
 
 axios.defaults.baseURL = "http://127.0.0.1:8000";
+// axios.defaults.baseURL = "http://0.0.0.0:8000";
 axios.interceptors.response.use(
   async (response) => {
     return response;

@@ -11,7 +11,6 @@ class ExamQuestionSerializer(serializers.ModelSerializer):
 
 
 class ExamAnswerSerializer(serializers.ModelSerializer):
-    question = ExamQuestionSerializer(read_only=True)
 
     class Meta:
         model = ExamAnswer

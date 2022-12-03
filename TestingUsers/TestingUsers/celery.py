@@ -5,10 +5,14 @@ https://docs.celeryproject.org/en/stable/django/first-steps-with-django.html
 
 """
 from __future__ import absolute_import
+
 import os
+
 from celery import Celery
-from django.core.mail import send_mail
+from celery import shared_task
+from django.apps import apps
 from django.conf import settings
+from django.core.mail import send_mail
 
 # this code copied from manage.py
 # set the default Django settings module for the 'celery' app.
@@ -37,3 +41,21 @@ def send_registration_email(username, email):
         from_email=settings.EMAIL_HOST_USER,
         recipient_list=[context["email"]]
     )
+
+
+@shared_task()
+def exam_post_cover(instance_pk):
+    import opennsfw2 as n2
+    from post.models import PostEnumChoice
+
+    post = apps.get_model('post', 'Post')
+    post = post.objects.get(id=instance_pk)
+
+    nsfw_probability = n2.predict_image(post.cover.path)
+    is_not_nsfw_content = True if nsfw_probability < 0.10 else False
+
+    if is_not_nsfw_content:
+        post.status = PostEnumChoice.RELEASE
+        post.save()
+
+    return 'Post has been released' if is_not_nsfw_content else 'Post on moderation'

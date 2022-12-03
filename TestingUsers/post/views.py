@@ -1,12 +1,14 @@
 from django.core.files.images import ImageFile
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
-from users.services import resize_image, crop_image, prepare_image_coordinates
-from .serializers import PostSerializer, CategorySerializer
+from exam.models import Exam
+from users.services import crop_image, prepare_image_coordinates
 from .models import PostEnumChoice, Category, Post
-from .permissions import IsAuthOrReadOnly
+from .serializers import PostSerializer, CategorySerializer
 
 
 class CategoryViewSet(ModelViewSet):
@@ -17,18 +19,25 @@ class CategoryViewSet(ModelViewSet):
         return Category.objects.all()
 
 
+# TODO: Post edit
+# TODO: Post delete
+
 class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
-    permission_class = IsAuthOrReadOnly
+    permission_class = IsAuthenticatedOrReadOnly
 
     def get_queryset(self):
         return Post.objects.filter(status=PostEnumChoice.RELEASE).order_by('-created_date')
 
+    @action(methods=['GET'], detail=False, permission_classes=[IsAuthenticated])
+    def my_posts(self, request):
+        queryset = self.get_queryset().filter(author=request.user)
+        serializer = PostSerializer(instance=queryset, many=True)
+        return Response(serializer.data)
+
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
         cover = data.pop('cover')
-
-        # check for erotic photos
 
         category = Category.objects.filter(
             slug=data.pop('category')).first()
@@ -51,3 +60,12 @@ class PostViewSet(ModelViewSet):
         self.perform_create(serializer)
 
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        exam = Exam.objects.filter(id=self.request.data.pop('exam')).first()
+
+        if exam is not None:
+            serializer.validated_data['exam'] = exam
+
+        serializer.validated_data['author'] = self.request.user
+        serializer.save()

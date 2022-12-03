@@ -97,6 +97,8 @@ export default {
         id: this.id,
       });
 
+      console.log(result)
+
       if (result.success) {
         this.post = result.data;
       }

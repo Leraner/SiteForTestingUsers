@@ -72,11 +72,6 @@ export default {
       }
     },
     async getProfile() {
-      if (this.$store.state.user.user_avatar) {
-        this.user = this.$store.state.user
-        return;
-      }
-
       const result = await this.$store.dispatch("fetchProfile");
 
       if (result.status === 200) {

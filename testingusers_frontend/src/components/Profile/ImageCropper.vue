@@ -65,9 +65,6 @@
 import VueCropper from "vue-cropperjs";
 import "cropperjs/dist/cropper.css";
 
-// TODO: replace image cropper like component with props
-// :aspect-ratio="16 / 9" for posts 1116 / 272
-
 export default {
   components: {
     VueCropper,

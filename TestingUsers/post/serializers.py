@@ -36,9 +36,6 @@ class PostSerializer(TaggitSerializer, serializers.ModelSerializer):
             'tags',
         ]
 
-    def create(self, validated_data):
-        return Post.objects.create(author=self.context['request'].user, **validated_data)
-
     def get_created_date(self, obj):
         now = datetime.now(tz=pytz.UTC)
         date_delta = now - obj.created_date
