@@ -10,7 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import datetime
+import os
+
 from pathlib import Path
+from environs import Env
+
+
+env = Env()
+env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +31,32 @@ SECRET_KEY = 'django-insecure-uiibm9h+!^rmc3&syov%n!46kk75+9r)iwe-wa60_it%rvqqn3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    # '0.0.0.0'
+]
 
 # Application definition
+
+THIRD_PARTY_APPS = [
+    'rest_framework',
+    'djoser',
+    'debug_toolbar',
+    'corsheaders',
+    'taggit',
+    'django_filters',
+    'drf_yasg',
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+    'django_celery_results',
+]
+
+LOCAL_APPS = [
+    'users.apps.UsersConfig',
+    'questions.apps.QuestionsConfig',
+    'answers.apps.AnswersConfig',
+    'exam.apps.ExamConfig',
+    'post.apps.PostConfig',
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -36,22 +66,22 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'rest_framework',
+    *THIRD_PARTY_APPS,
 
-    'rest_framework_simplejwt',
-    'rest_framework_simplejwt.token_blacklist',
-
-    'users.apps.UsersConfig',
+    *LOCAL_APPS,
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'TestingUsers.urls'
@@ -77,6 +107,7 @@ WSGI_APPLICATION = 'TestingUsers.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -84,18 +115,33 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'HOST': 'db',
+#         'PORT': 5432,
+#         'USER': 'admin',
+#         'PASSWORD': 'admin',
+#         'NAME': 'testingusers_db'
+#     }
+# }
+
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    # ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ]
+
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=1),
-    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=3),
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=50),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(minutes=100),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
@@ -138,3 +184,29 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.CustomUser'
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    'http://127.0.0.1:5000',
+]
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = env.str('EMAIL_HOST')
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = 465
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+# CELERY_BROKER_URL = 'pyamqp://rabbitmq:5672'
+CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
+CELERY_RESULT_BACKEND = 'rpc://'
+
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = '/media/'
+DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024

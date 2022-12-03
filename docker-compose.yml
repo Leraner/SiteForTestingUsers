@@ -1,0 +1,79 @@
+version: "3.9.15"
+
+services: # Each service is a separate container
+  # Postgresql service
+  db:
+    image: postgres:11
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=testingusers_db
+    restart: always
+  # RabbitMq service
+  rabbitmq:
+      image: rabbitmq:3-management-alpine
+      container_name: 'rabbitmq'
+      ports:
+        - 5672:5672
+      volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      restart: always
+  # Celery worker service
+  celery_worker:
+    restart: always
+    build:
+      context: .
+    command: celery -A TestingUsers worker -l info
+    volumes:
+      - ./TestingUsers:/app
+    depends_on:
+      - django
+      - rabbitmq
+      - db
+#  Frontend project
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile_frontend
+    command: npm run serve
+    ports:
+      - 8080:8080
+    volumes:
+      - ./frontend:/home/SiteForTestingUsers/testingusers_frontend
+      - /home/SiteForTestingUsers/testingusers_frontend/node_modules
+    depends_on:
+      - django
+      - db
+      - rabbitmq
+      - celery_worker
+  #  Django project service
+  django:
+    build:
+      context: ./ # Where docker will find Dockerfile
+      dockerfile: Dockerfile # Name of docker file
+    command: >  # Start django project
+      sh -c "python manage.py migrate &&
+             python manage.py prepare_stand &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports: # Forwarding ports from the container to the machine
+      - 8000:8000
+    env_file:
+      - ./TestingUsers/.env
+    volumes: # Mount the hard drive to our container - what's in the container is available locally
+      - .media:/app/TestingUsers/media
+    depends_on: # Django depends on this services
+      - db
+      - rabbitmq
+    restart: always
+
+
+volumes:
+  media:
+  postgres_data:
