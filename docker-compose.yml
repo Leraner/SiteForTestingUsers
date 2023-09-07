@@ -30,9 +30,13 @@ services: # Each service is a separate container
     restart: always
     build:
       context: .
-    command: celery -A TestingUsers worker -l info
-    volumes:
-      - ./TestingUsers:/app
+    command: >  # Start django project
+      sh -c "
+      pip install opennsfw2 &&
+      celery -A TestingUsers worker -l info"
+#    command: celery -A TestingUsers worker -l info
+    volumes: # Mount the hard drive to our container - what's in the container is available locally
+      - .media:/SiteForTestingUsers/TestingUsers/media
     depends_on:
       - django
       - rabbitmq
@@ -42,7 +46,11 @@ services: # Each service is a separate container
     build:
       context: .
       dockerfile: Dockerfile_frontend
-    command: npm run serve
+    command: >  # Start django project
+      sh -c "
+      npm install @popperjs/core &&
+      npm install &&
+      npm run serve"
     ports:
       - 8080:8080
     volumes:
@@ -53,7 +61,7 @@ services: # Each service is a separate container
       - db
       - rabbitmq
       - celery_worker
-  #  Django project service
+##  #  Django project service
   django:
     build:
       context: ./ # Where docker will find Dockerfile
@@ -67,7 +75,7 @@ services: # Each service is a separate container
     env_file:
       - ./TestingUsers/.env
     volumes: # Mount the hard drive to our container - what's in the container is available locally
-      - .media:/app/TestingUsers/media
+      - .media:/SiteForTestingUsers/TestingUsers/media
     depends_on: # Django depends on this services
       - db
       - rabbitmq

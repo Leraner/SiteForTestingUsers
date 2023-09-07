@@ -8,10 +8,4 @@ COPY ./testingusers_frontend/src /SiteForTestingUsersFront/testingusers_frontend
 
 WORKDIR /SiteForTestingUsersFront/testingusers_frontend
 
-RUN npm install -g npm
-
-COPY ./testingusers_frontend/package.json /SiteForTestingUsersFront/testingusers_frontend/
-COPY ./testingusers_frontend/package-lock.json /SiteForTestingUsersFront/testingusers_frontend/
-
 RUN npm install
-RUN npm run build

@@ -62,10 +62,13 @@ class PostViewSet(ModelViewSet):
         return Response(serializer.data)
 
     def perform_create(self, serializer):
-        exam = Exam.objects.filter(id=self.request.data.pop('exam')).first()
+        if self.request.data.get('exam') == '':
+            serializer.validated_data['exam'] = None
+        else:
+            exam = Exam.objects.filter(id=self.request.data.pop('exam')).first()
 
-        if exam is not None:
-            serializer.validated_data['exam'] = exam
+            if exam is not None:
+                serializer.validated_data['exam'] = exam
 
         serializer.validated_data['author'] = self.request.user
         serializer.save()

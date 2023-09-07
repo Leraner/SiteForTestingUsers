@@ -8,5 +8,3 @@ def send_user_email(**kwargs):
     user = kwargs['user']
     return send_registration_email.delay(username=user.username, email=user.email)
 
-
-# TODO: add it when we will it on the production

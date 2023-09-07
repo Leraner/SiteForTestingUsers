@@ -32,7 +32,8 @@ SECRET_KEY = 'django-insecure-uiibm9h+!^rmc3&syov%n!46kk75+9r)iwe-wa60_it%rvqqn3
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    # '0.0.0.0'
+    '0.0.0.0',
+    '127.0.0.1',
 ]
 
 # Application definition
@@ -115,6 +116,7 @@ DATABASES = {
     }
 }
 
+# Postgresql for docker-compose
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -194,15 +196,17 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5000',
 ]
 
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = env.str('EMAIL_HOST')
-EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# If all data in .env
+# EMAIL_HOST = env.str('EMAIL_HOST')
+# EMAIL_HOST_USER = env.str('EMAIL_HOST_USER')
+# EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 465
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
-# CELERY_BROKER_URL = 'pyamqp://rabbitmq:5672'
+# CELERY_BROKER_URL = 'pyamqp://rabbitmq:5672' - For docker-compose
 CELERY_BROKER_URL = 'pyamqp://guest@localhost//'
 CELERY_RESULT_BACKEND = 'rpc://'
 
