@@ -13,7 +13,7 @@ Not-Suitable-For-Work контента с помощью библиотеки ht
 ### Как запустить проект?
 ```
 git clone https://github.com/Leraner/SiteForTestingUsers.git
-pip install -r requirements.txt
+pip install -r requirements_conda.txt / pip install -r requirements_virtualenv.txt
 
 ### Запускаем в докере rabbitmq ###
 docker run -d -p 5672:5672 rabbitmq
